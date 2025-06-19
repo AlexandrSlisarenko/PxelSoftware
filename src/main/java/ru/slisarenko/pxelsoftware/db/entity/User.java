@@ -20,7 +20,7 @@ import java.util.List;
 @Table(name = "users", schema = "pixel")
 public class User extends BaseEntity<Long> {
 
-    @Column(name = "user_name", nullable = false, length = 500)
+    @Column(name = "user_name", nullable = false, length = 500, unique = true)
     @Length(max = 500)
     private String name;
 

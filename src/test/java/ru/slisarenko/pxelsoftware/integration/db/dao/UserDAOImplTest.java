@@ -3,6 +3,7 @@ package ru.slisarenko.pxelsoftware.integration.db.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.Commit;
 import ru.slisarenko.pxelsoftware.db.dao.UserDAO;
 import ru.slisarenko.pxelsoftware.exception.UserException;
@@ -31,15 +32,19 @@ class UserDAOImplTest {
     @Autowired
     private UserDAO userDAO;
 
+
     @BeforeAll
     static void initVariables() {
+
+        var passwordEncoder = new BCryptPasswordEncoder();
+
         var random = new Random();
         userName = "testName" + random.nextInt(1000);
         oldPhone = "123456789" + random.nextInt(100);
         newPhone = "123456789" + random.nextInt(100);
         oldEmail = "test" + random.nextInt(1000) + "@gmail.com";
         newEmail = "test" + random.nextInt(1000) + "@gmail.com";
-        password = "1234567890" + random.nextInt(1000);
+        password = "{bcrypt}" + passwordEncoder.encode(userName + "123");
         birthday = LocalDate.of(1900 + random.nextInt(100), random.nextInt(1, 12), random.nextInt(1, 31));
     }
 

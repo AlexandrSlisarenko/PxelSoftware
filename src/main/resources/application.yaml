@@ -17,13 +17,23 @@ spring:
         default_schema: pixel
         show_sql: true
         format_sql: true
-        hbm2ddl.auto: update
+        hbm2ddl:
+          import_files: /import.sql
+          auto: create
+
 
 logging:
-  pattern:
-    level: INFO
+  level:
+      root: INFO
+      org.springframework.jdbc.core: TRACE
+      org.springframework.security: TRACE
 
-
+jwt:
+  access-token-key: '{"kty":"oct","k":"404491d134b23069cd800106d3e2edd63996def57f8f1530e4e7bc8dbdf80fb9"}'
+  refresh-token-key: '{"kty":"oct","k":"404491d134b23069cd800106d3e2edd63996def57f8f1530e4e7bc8dbdf80fb9"}'
+  request-path: "/jwt/tokens"
+  refresh-path: "/jwt/refresh"
+  logout-path: "/jwt/logout"
 
 
 
