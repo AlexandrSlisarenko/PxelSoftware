@@ -1,0 +1,30 @@
+server:
+  port: 8282
+  http2:
+    enabled: true
+
+spring:
+  application:
+    name: PxelSoftware
+  datasource:
+    url: jdbc:postgresql://localhost:5432/HibernatePractic
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        default_schema: pixel
+        show_sql: true
+        format_sql: true
+        hbm2ddl.auto: update
+
+logging:
+  pattern:
+    level: INFO
+
+
+
+
+
+
