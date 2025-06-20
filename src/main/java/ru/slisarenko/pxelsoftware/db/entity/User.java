@@ -32,6 +32,14 @@ public class User extends BaseEntity<Long> {
     @Length(min = 8, max = 500)
     private String password;
 
+    @Column(name = "login_password", nullable = false, length = 500)
+    @Length(min = 8, max = 500)
+    private String loginPassword;
+
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Account account;
 

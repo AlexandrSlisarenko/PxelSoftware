@@ -34,6 +34,8 @@ jwt:
   request-path: "/jwt/tokens"
   refresh-path: "/jwt/refresh"
   logout-path: "/jwt/logout"
+  duration-refresh-interval-hours: 2
+  duration-access-interval-min: 10
 
 
 

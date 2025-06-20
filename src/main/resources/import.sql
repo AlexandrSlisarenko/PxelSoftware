@@ -1,7 +1,7 @@
 
-INSERT INTO pixel.users(date_of_birth, user_name, user_password) VALUES ('1990-06-20', 'ivanov_ivan', '{bcrypt}$2a$12$oMXCCGIM57txm7XqeXWue.hKfv8lZqD5S3v7LY0Q0zqK2Kne0N.SK');
-INSERT INTO pixel.users(date_of_birth, user_name, user_password) VALUES ('1990-05-20', 'petrov_petr', '{bcrypt}$2a$12$xe6jIXeqhaypUJeNN/8qHOR5s4sIv08zLgJRxt.G8P3U2hJW2DINW');
-INSERT INTO pixel.users(date_of_birth, user_name, user_password) VALUES ('1990-02-20', 'sidorov_sidor', '{bcrypt}$2a$12$PVKm3wFEqu3MYV0gtIpco.KCS4L/z8DlHEGCLSqcgrN/HJ0CPk7Bu');
+INSERT INTO pixel.users(date_of_birth, user_name, user_password, login_password, role) VALUES ('1990-06-20', 'ivanov_ivan', '{bcrypt}$2a$12$oMXCCGIM57txm7XqeXWue.hKfv8lZqD5S3v7LY0Q0zqK2Kne0N.SK', 'aXZhbm92X2l2YW46cGFzczEyMw==', 'ROLE_USER');
+INSERT INTO pixel.users(date_of_birth, user_name, user_password, login_password, role) VALUES ('1990-05-20', 'petrov_petr', '{bcrypt}$2a$12$xe6jIXeqhaypUJeNN/8qHOR5s4sIv08zLgJRxt.G8P3U2hJW2DINW', 'cGV0cm92X3BldHI6cGFzczEyMw==', 'ROLE_USER');
+INSERT INTO pixel.users(date_of_birth, user_name, user_password, login_password, role) VALUES ('1990-02-20', 'sidorov_sidor', '{bcrypt}$2a$12$PVKm3wFEqu3MYV0gtIpco.KCS4L/z8DlHEGCLSqcgrN/HJ0CPk7Bu', 'c2lkb3Jvdl9zaWRvcjpwYXNzMTIz', 'ROLE_USER');
 
 INSERT INTO pixel.account(balance, id, user_id) values (10,1,1);
 INSERT INTO pixel.account(balance, id, user_id) values (10,2,2);
