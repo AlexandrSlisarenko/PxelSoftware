@@ -11,7 +11,7 @@ import ru.slisarenko.pxelsoftware.security.dto.Token;
 import java.util.Date;
 import java.util.function.Function;
 
-import static ru.slisarenko.pxelsoftware.config.Constants.CLAIM_AUTHORITIES;
+import static ru.slisarenko.pxelsoftware.config.Constants.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,14 +20,9 @@ public class RefreshTokenStringSerializer implements Function<Token, String> {
 
     private final JWEEncrypter encrypter;
 
-    private final EncryptionMethod encryptionMethod;
-
-    private final JWEAlgorithm algorithm;
-
-
     @Override
     public String apply(Token token) {
-        var jwtHeaders = new JWEHeader.Builder(algorithm, encryptionMethod)
+        var jwtHeaders = new JWEHeader.Builder(JWE_ALGORITHM_SERIALIZATION, ENCRYPTION_METHOD_SERIALIZATION)
                 .keyID(token.id().toString())
                 .build();
         var claimJwt = new JWTClaimsSet.Builder()

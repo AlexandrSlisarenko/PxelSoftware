@@ -1,7 +1,6 @@
 package ru.slisarenko.pxelsoftware.security.serialization;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -14,6 +13,7 @@ import ru.slisarenko.pxelsoftware.security.dto.Token;
 import java.util.Date;
 import java.util.function.Function;
 
+import static ru.slisarenko.pxelsoftware.config.Constants.JWS_ALGORITHM_SERIALIZATION;
 import static ru.slisarenko.pxelsoftware.config.Constants.CLAIM_AUTHORITIES;
 
 @Slf4j
@@ -23,11 +23,9 @@ public class AccessTokenStringSerialization implements Function<Token, String> {
 
     private final JWSSigner signer;
 
-    private final JWSAlgorithm algorithm;
-
     @Override
     public String apply(Token token) {
-        var jwtHeaders = new JWSHeader.Builder(this.algorithm)
+        var jwtHeaders = new JWSHeader.Builder(JWS_ALGORITHM_SERIALIZATION)
                 .keyID(token.id().toString())
                 .build();
         var claimJwt = new JWTClaimsSet.Builder()

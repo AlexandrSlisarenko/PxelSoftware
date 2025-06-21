@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.context.SecurityContextRepository;
@@ -20,7 +19,6 @@ import java.util.Date;
 
 import static ru.slisarenko.pxelsoftware.config.Constants.JWT_LOGOUT;
 
-@RequiredArgsConstructor
 @Builder
 public class JwtLogoutFilter extends OncePerRequestFilter {
 
@@ -28,7 +26,7 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
 
     private SecurityContextRepository securityContextRepository;
 
-    private final JdbcTokenLogoutRepository jdbcTokenLogoutRepository;
+    private JdbcTokenLogoutRepository jdbcTokenLogoutRepository;
 
     /**
      * Same contract as for {@code doFilter}, but guaranteed to be

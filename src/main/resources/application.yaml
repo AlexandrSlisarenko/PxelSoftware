@@ -1,5 +1,5 @@
 server:
-  port: 8282
+  port: 8585
   http2:
     enabled: true
 

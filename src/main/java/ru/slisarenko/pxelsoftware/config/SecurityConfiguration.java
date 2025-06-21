@@ -35,7 +35,7 @@ public class SecurityConfiguration {
     }
 
     // Configuring HttpSecurity
-    @Bean
+    /*@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for simplicity
@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                 .formLogin(withDefaults()); // <-- Use withDefaults() for form-based login
 
         return http.build();
-    }
+    }*/
 
     // Password Encoding
     @Bean
