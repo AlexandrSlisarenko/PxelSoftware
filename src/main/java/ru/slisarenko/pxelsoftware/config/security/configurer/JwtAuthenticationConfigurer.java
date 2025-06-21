@@ -52,6 +52,7 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
     private final AccessTokenStringSerialization accessTokenStringSerializer;
 
     private final JdbcTokenLogoutRepository jwtTokenLogoutRepository;
+    private final RequestAttributeSecurityContextRepository requestAttributeSecurityContextRepository;
 
     @Override
     public void init(HttpSecurity builder) throws Exception {
@@ -93,7 +94,7 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
     private RequestJwtTokenFilter createJwtTokenFilter() {
         return RequestJwtTokenFilter.builder()
                 .requestMatcher(createRequestMatcher(this.pathRequestToken))
-                .securityContextRepository(new RequestAttributeSecurityContextRepository())
+                .securityContextRepository(requestAttributeSecurityContextRepository)
                 .accessTokenFactory(this.accessTokenFactory)
                 .refreshTokenFactory(this.refreshTokenFactory)
                 .accessTokenStringSerializer(this.accessTokenStringSerializer)
@@ -122,7 +123,7 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
                 .setFailureHandler((request, response, exception) ->
                         response.sendError(HttpServletResponse.SC_FORBIDDEN));
         jwtAuthenticationFilter
-                .setSecurityContextRepository(new RequestAttributeSecurityContextRepository());
+                .setSecurityContextRepository(requestAttributeSecurityContextRepository);
         jwtAuthenticationFilter
                 .setSecurityContextHolderStrategy(SecurityContextHolder.getContextHolderStrategy());
 
@@ -134,7 +135,7 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
                 .accessTokenFactory(this.accessTokenFactory)
                 .accessTokenStringSerializer(this.accessTokenStringSerializer)
                 .requestMatcher(createRequestMatcher(this.pathRefreshToken))
-                .securityContextRepository(new RequestAttributeSecurityContextRepository())
+                .securityContextRepository(requestAttributeSecurityContextRepository)
                 .objectMapper(new ObjectMapper())
                 .build();
     }
@@ -143,7 +144,7 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
         return JwtLogoutFilter.builder()
                 .jdbcTokenLogoutRepository(this.jwtTokenLogoutRepository)
                 .requestMatcher(createRequestMatcher(this.pathLogoutToken))
-                .securityContextRepository(new RequestAttributeSecurityContextRepository())
+                .securityContextRepository(requestAttributeSecurityContextRepository)
                 .build();
     }
 }

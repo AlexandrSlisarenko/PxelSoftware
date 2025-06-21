@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import ru.slisarenko.pxelsoftware.config.security.configurer.JwtAuthenticationConfigurer;
 import ru.slisarenko.pxelsoftware.security.factory.AccessTokenFactory;
 import ru.slisarenko.pxelsoftware.security.factory.RefreshTokenFactory;
@@ -104,6 +106,11 @@ public class HttpSecurityConfiguration {
     }
 
     @Bean
+    public RequestAttributeSecurityContextRepository requestAttributeSecurityContextRepository(){
+        return new RequestAttributeSecurityContextRepository();
+    }
+
+    @Bean
     public JwtAuthenticationConfigurer jwtAuthenticationConfigurer(
             @Value("${jwt.request-path}") String requestPath,
             @Value("${jwt.refresh-path}") String refreshPath,
@@ -114,7 +121,8 @@ public class HttpSecurityConfiguration {
             AccessTokenJwsStringDeserialize accessTokenJwsStringDeserialize,
             RefreshTokenStringDeserializer refreshTokenJwsStringDeserialize,
             RefreshTokenStringSerializer refreshTokenJwsStringSerialize,
-            JdbcTokenLogoutRepository jdbcTokenLogoutRepository
+            JdbcTokenLogoutRepository jdbcTokenLogoutRepository,
+            RequestAttributeSecurityContextRepository securityContextRepository
     ){
         return JwtAuthenticationConfigurer.builder()
                 .pathRequestToken(requestPath)
@@ -127,6 +135,7 @@ public class HttpSecurityConfiguration {
                 .refreshTokenStringDeserializer(refreshTokenJwsStringDeserialize)
                 .accessTokenStringSerializer(accessTokenStringSerialization)
                 .accessTokenStringDeserializer(accessTokenJwsStringDeserialize)
+                .requestAttributeSecurityContextRepository(securityContextRepository)
                 .build();
     }
 
@@ -137,9 +146,9 @@ public class HttpSecurityConfiguration {
         http.httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest
-                                /* .requestMatchers(HttpMethod.POST, "/hello.html").hasRole("USER")
-                                 .requestMatchers(HttpMethod.POST, "/public/**").hasRole("ADMIN")
-                                 .requestMatchers(HttpMethod.POST, "/error").permitAll()*/
+                                .requestMatchers(HttpMethod.POST, "/auth/welcome").hasRole("USER")
+                                /* .requestMatchers(HttpMethod.POST, "/public/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/error").permitAll()*/
                                 .anyRequest().authenticated()
                 ).sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
