@@ -12,23 +12,27 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.slisarenko.pxelsoftware.config.security.configurer.JwtAuthenticationConfigurer;
 import ru.slisarenko.pxelsoftware.security.factory.AccessTokenFactory;
 import ru.slisarenko.pxelsoftware.security.factory.RefreshTokenFactory;
 import ru.slisarenko.pxelsoftware.security.repository.JdbcTokenLogoutRepository;
 import ru.slisarenko.pxelsoftware.security.repository.JdbcTokenLogoutRepositoryImpl;
+import ru.slisarenko.pxelsoftware.security.repository.JdbcUserDetailRepositoryImpl;
 import ru.slisarenko.pxelsoftware.security.serialization.AccessTokenJwsStringDeserialize;
 import ru.slisarenko.pxelsoftware.security.serialization.AccessTokenStringSerialization;
 import ru.slisarenko.pxelsoftware.security.serialization.RefreshTokenStringDeserializer;
 import ru.slisarenko.pxelsoftware.security.serialization.RefreshTokenStringSerializer;
 
+import javax.sql.DataSource;
 import java.text.ParseException;
 import java.time.Duration;
 
@@ -37,6 +41,16 @@ import java.time.Duration;
 @Configuration
 @EnableWebSecurity
 public class HttpSecurityConfiguration {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(DataSource dataSource) {
+        return new JdbcUserDetailRepositoryImpl(dataSource);
+    }
 
     @Bean
     public JdbcTokenLogoutRepository jdbcTokenLogoutRepository(JdbcTemplate jdbcTemplate) {
@@ -93,27 +107,45 @@ public class HttpSecurityConfiguration {
     public JwtAuthenticationConfigurer jwtAuthenticationConfigurer(
             @Value("${jwt.request-path}") String requestPath,
             @Value("${jwt.refresh-path}") String refreshPath,
-            @Value("${jwt.logout-path}") String logoutPath
+            @Value("${jwt.logout-path}") String logoutPath,
+            RefreshTokenFactory refreshTokenFactory,
+            AccessTokenFactory accessTokenFactory,
+            AccessTokenStringSerialization accessTokenStringSerialization,
+            AccessTokenJwsStringDeserialize accessTokenJwsStringDeserialize,
+            RefreshTokenStringDeserializer refreshTokenJwsStringDeserialize,
+            RefreshTokenStringSerializer refreshTokenJwsStringSerialize,
+            JdbcTokenLogoutRepository jdbcTokenLogoutRepository
     ){
         return JwtAuthenticationConfigurer.builder()
                 .pathRequestToken(requestPath)
                 .pathLogoutToken(logoutPath)
                 .pathRefreshToken(refreshPath)
+                .jwtTokenLogoutRepository(jdbcTokenLogoutRepository)
+                .refreshTokenFactory(refreshTokenFactory)
+                .accessTokenFactory(accessTokenFactory)
+                .refreshTokenStringSerializer(refreshTokenJwsStringSerialize)
+                .refreshTokenStringDeserializer(refreshTokenJwsStringDeserialize)
+                .accessTokenStringSerializer(accessTokenStringSerialization)
+                .accessTokenStringDeserializer(accessTokenJwsStringDeserialize)
                 .build();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http,
+                                                   JwtAuthenticationConfigurer jwtAuthenticationConfigurer) throws Exception {
+        http.apply(jwtAuthenticationConfigurer);
         http.httpBasic(Customizer.withDefaults())
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers(HttpMethod.POST, "/hello").hasRole("USER")
+                .authorizeHttpRequests(authorizeRequest ->
+                        authorizeRequest
+                                /* .requestMatchers(HttpMethod.POST, "/hello.html").hasRole("USER")
+                                 .requestMatchers(HttpMethod.POST, "/public/**").hasRole("ADMIN")
+                                 .requestMatchers(HttpMethod.POST, "/error").permitAll()*/
                                 .anyRequest().authenticated()
-                )
-                .sessionManagement(httpSecuritySessionManagementConfigurer -> {
-                    httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                });
+                ).sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
 
         return http.build();
+
     }
 }

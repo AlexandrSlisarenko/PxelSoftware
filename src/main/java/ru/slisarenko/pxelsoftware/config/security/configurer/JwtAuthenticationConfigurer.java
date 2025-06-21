@@ -10,28 +10,29 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.slisarenko.pxelsoftware.security.converter.JwtAuthenticationConverter;
-import ru.slisarenko.pxelsoftware.security.dto.Token;
+import ru.slisarenko.pxelsoftware.security.factory.AccessTokenFactory;
+import ru.slisarenko.pxelsoftware.security.factory.RefreshTokenFactory;
 import ru.slisarenko.pxelsoftware.security.filter.JwtLogoutFilter;
 import ru.slisarenko.pxelsoftware.security.filter.RefreshTokenFilter;
 import ru.slisarenko.pxelsoftware.security.filter.RequestJwtTokenFilter;
 import ru.slisarenko.pxelsoftware.security.repository.JdbcTokenLogoutRepository;
+import ru.slisarenko.pxelsoftware.security.serialization.AccessTokenJwsStringDeserialize;
+import ru.slisarenko.pxelsoftware.security.serialization.AccessTokenStringSerialization;
+import ru.slisarenko.pxelsoftware.security.serialization.RefreshTokenStringDeserializer;
+import ru.slisarenko.pxelsoftware.security.serialization.RefreshTokenStringSerializer;
 import ru.slisarenko.pxelsoftware.security.service.TokenAuthenticationUserDetailsService;
 
 import java.util.Objects;
-import java.util.function.Function;
 
 @Slf4j
 @Builder
@@ -42,13 +43,13 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
     private final String pathRefreshToken;
     private final String pathLogoutToken;
 
-    private final Function<Authentication, Token> refreshTokenFactory;
-    private final Function<Token, Token> accessTokenFactory;
+    private final RefreshTokenFactory refreshTokenFactory;
+    private final AccessTokenFactory accessTokenFactory;
 
-    private final Function<String, Token> accessTokenStringDeserializer;
-    private final Function<String, Token> refreshTokenStringDeserializer;
-    private final Function<Token, String> refreshTokenStringSerializer;
-    private final Function<Token, String> accessTokenStringSerializer;
+    private final AccessTokenJwsStringDeserialize accessTokenStringDeserializer;
+    private final RefreshTokenStringDeserializer refreshTokenStringDeserializer;
+    private final RefreshTokenStringSerializer refreshTokenStringSerializer;
+    private final AccessTokenStringSerialization accessTokenStringSerializer;
 
     private final JdbcTokenLogoutRepository jwtTokenLogoutRepository;
 
@@ -84,7 +85,7 @@ public class JwtAuthenticationConfigurer extends AbstractHttpConfigurer<JwtAuthe
 
     private PreAuthenticatedAuthenticationProvider createProvider() {
         var provider = new PreAuthenticatedAuthenticationProvider();
-        var service = new TokenAuthenticationUserDetailsService(jwtTokenLogoutRepository);
+        var service = new TokenAuthenticationUserDetailsService(this.jwtTokenLogoutRepository);
         provider.setPreAuthenticatedUserDetailsService(service);
         return provider;
     }
