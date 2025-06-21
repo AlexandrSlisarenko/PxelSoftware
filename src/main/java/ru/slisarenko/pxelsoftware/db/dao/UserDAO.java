@@ -23,6 +23,10 @@ public interface UserDAO extends UserFilterRepository {
 
     User deletePhone(Long userId, String phone) throws UserException;
 
+    Integer countPhone(Long userId) throws UserException;
+
+    Integer countEmail(Long userId) throws UserException;
+
     Optional<User> createUser(String username, String password, LocalDate dateOfBirth, String email, String phone);
 
 

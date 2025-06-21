@@ -60,10 +60,12 @@ public class UserService {
 
     public UserDTO deleteEmail(Long id, String email) {
         try {
-            var isHaveEmail = doesTheUserHaveAnEmail(id, email);
-
-            return isHaveEmail ? mapEntityToDTO(userDAO.deleteEmail(id, email))
-                    : getEmptyUser("Email " + email + " is not exists");
+            if(!isOnlyOneEmail(id)) {
+                var isHaveEmail = doesTheUserHaveAnEmail(id, email);
+                return isHaveEmail ? mapEntityToDTO(userDAO.deleteEmail(id, email))
+                        : getEmptyUser("Email " + email + " is not exists");
+            }
+            return getEmptyUser("Is only one email");
         } catch (UserException userException) {
             return getEmptyUser(userException.getMessage());
         }
@@ -94,10 +96,13 @@ public class UserService {
 
     public UserDTO deletePhone(Long id, String phone) {
         try {
-            var isHavePhone = doesTheUserHaveAnPhone(id, phone);
+            if(!isOnlyOnePhone(id)) {
+                var isHavePhone = doesTheUserHaveAnPhone(id, phone);
 
-            return isHavePhone ? mapEntityToDTO(userDAO.deleteEmail(id, phone))
-                    : getEmptyUser("Email " + phone + " is not exists");
+                return isHavePhone ? mapEntityToDTO(userDAO.deleteEmail(id, phone))
+                        : getEmptyUser("Phone " + phone + " is not exists");
+            }
+            return getEmptyUser("Is only one phone");
         } catch (UserException userException) {
             return getEmptyUser(userException.getMessage());
         }
@@ -145,6 +150,14 @@ public class UserService {
                 .map(PhoneData::getPhone)
                 .toList()
                 .contains(phone);
+    }
+
+    private boolean isOnlyOneEmail(Long id) throws UserException {
+        return userDAO.countEmail(id) > 1;
+    }
+
+    private boolean isOnlyOnePhone(Long id) throws UserException {
+        return userDAO.countPhone(id) > 1;
     }
 
 

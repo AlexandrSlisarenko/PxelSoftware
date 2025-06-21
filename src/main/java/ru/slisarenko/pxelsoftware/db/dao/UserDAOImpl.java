@@ -103,6 +103,18 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
+    public Integer countPhone(Long userId) throws UserException {
+        var user = getUserFromDB(userId);
+        return user.getPhones().size();
+    }
+
+    @Override
+    public Integer countEmail(Long userId) throws UserException {
+        var user = getUserFromDB(userId);
+        return user.getEmails().size();
+    }
+
+    @Override
     public Page<User> searchUsersByFilter(FilterParams filter, Pageable pageable) throws UserException{
         try {
             return userRepository.searchUsersByFilter(filter, pageable);
