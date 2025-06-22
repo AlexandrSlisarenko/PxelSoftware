@@ -26,6 +26,15 @@ public class UserService {
 
     private final UserDAO userDAO;
 
+    public UserDTO getByName(String name) {
+        try {
+            var userFromDB = userDAO.getUserByName(name);
+            return mapEntityToDTO(userFromDB);
+        } catch (UserException userException) {
+            return getEmptyUser("The user with the name " + name + " is not unidentified");
+        }
+    }
+
     public UserDTO getById(Long id) {
         try {
             var userFromDB = userDAO.getUser(id);

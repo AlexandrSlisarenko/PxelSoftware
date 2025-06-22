@@ -11,6 +11,8 @@ public interface UserDAO extends UserFilterRepository {
 
     User getUser(Long id) throws UserException;
 
+    User getUserByName(String name) throws UserException;
+
     User addEmail(Long userId, String email) throws UserException;
 
     User updateEmail(Long userId, String emailOld, String emailNew) throws UserException;

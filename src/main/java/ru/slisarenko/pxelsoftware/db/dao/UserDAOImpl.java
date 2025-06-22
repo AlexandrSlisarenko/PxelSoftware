@@ -15,7 +15,6 @@ import ru.slisarenko.pxelsoftware.exception.UserException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -26,9 +25,9 @@ public class UserDAOImpl implements UserDAO {
     private final UserRepository userRepository;
 
     @Override
-    public User getUser(Long id) throws UserException{
+    public User getUser(Long id) throws UserException {
         try {
-           return getUserFromDB(id);
+            return getUserFromDB(id);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new UserException(e.getMessage());
@@ -36,7 +35,17 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User addEmail(Long userId, String email) throws UserException{
+    public User getUserByName(String name) throws UserException {
+        try {
+            return userRepository.findByName(name);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new UserException(e.getMessage());
+        }
+    }
+
+    @Override
+    public User addEmail(Long userId, String email) throws UserException {
         var user = getUserFromDB(userId);
 
         user.getEmails().add(EmailData.builder()
@@ -48,22 +57,22 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User  updateEmail(Long userId, String emailOld, String emailNew) throws UserException{
-       var userFromDB = getUserFromDB(userId);
+    public User updateEmail(Long userId, String emailOld, String emailNew) throws UserException {
+        var userFromDB = getUserFromDB(userId);
 
-       userFromDB.getEmails().forEach(email ->{
+        userFromDB.getEmails().forEach(email -> {
             email.setEmail(email.getEmail().equals(emailOld) ? emailNew : emailOld);
-       });
+        });
 
-       return saveAndFlush(userFromDB);
+        return saveAndFlush(userFromDB);
     }
 
     @Override
-    public User deleteEmail(Long userId, String email) throws UserException{
+    public User deleteEmail(Long userId, String email) throws UserException {
         var userFromDB = getUserFromDB(userId);
 
         userFromDB.getEmails().remove(
-                        userFromDB.getEmails().stream()
+                userFromDB.getEmails().stream()
                         .filter(e -> e.getEmail().equals(email))
                         .findFirst()
                         .orElseThrow());
@@ -72,7 +81,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User addPhone(Long userId, String phone) throws UserException{
+    public User addPhone(Long userId, String phone) throws UserException {
         var user = getUserFromDB(userId);
 
         user.getPhones().add(PhoneData.builder()
@@ -84,21 +93,21 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User updatePhone(Long userId, String phoneOld, String phoneNew) throws UserException{
+    public User updatePhone(Long userId, String phoneOld, String phoneNew) throws UserException {
         var user = getUserFromDB(userId);
-        user.getPhones().forEach(phone ->{
+        user.getPhones().forEach(phone -> {
             phone.setPhone(phone.getPhone().equals(phoneOld) ? phoneNew : phoneOld);
         });
         return saveAndFlush(user);
     }
 
     @Override
-    public User deletePhone(Long userId, String phone) throws UserException{
+    public User deletePhone(Long userId, String phone) throws UserException {
         var user = getUserFromDB(userId);
         user.getPhones().remove(user.getPhones().stream()
                 .filter(p -> p.getPhone().equals(phone))
                 .findFirst()
-                .orElseThrow(() ->  new UserException("Phone number not found")));
+                .orElseThrow(() -> new UserException("Phone number not found")));
         return saveAndFlush(user);
     }
 
@@ -115,7 +124,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public Page<User> searchUsersByFilter(FilterParams filter, Pageable pageable) throws UserException{
+    public Page<User> searchUsersByFilter(FilterParams filter, Pageable pageable) throws UserException {
         try {
             return userRepository.searchUsersByFilter(filter, pageable);
         } catch (Exception e) {
@@ -155,7 +164,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     private User getUserFromDB(Long Id) throws UserException {
-        return userRepository.findById(Id).orElseThrow(() ->  new UserException("User not found"));
+        return userRepository.findById(Id).orElseThrow(() -> new UserException("User not found"));
     }
 
     private User saveAndFlush(User user) throws UserException {
