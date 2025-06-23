@@ -1,10 +1,12 @@
 package ru.slisarenko.pxelsoftware.service;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.slisarenko.pxelsoftware.db.dao.AccountDAO;
+import ru.slisarenko.pxelsoftware.db.dao.AccountDepositDAO;
 import ru.slisarenko.pxelsoftware.db.entity.Account;
 
 import java.math.BigDecimal;
@@ -13,11 +15,12 @@ import java.util.List;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Builder
+@Getter
 public class DepositService {
 
-    private final AccountDAO accountDAO;
+    private final AccountDepositDAO accountDAO;
 
     @Builder.Default
     private List<Account> accountsWithMaxDeposit = new ArrayList<>();

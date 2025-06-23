@@ -20,7 +20,18 @@ spring:
         hbm2ddl:
           import_files: /import.sql
           auto: create
-
+  quartz:
+    job-store-type: jdbc #Database Mode
+    jdbc:
+      initialize-schema: never #Do not initialize table structure
+    properties:
+      org:
+        quartz:
+         jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate #We only make database-specific proxies for databases
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            dataSource: quartzDataSource
+            tablePrefix: QRTZ_
 
 logging:
   level:
@@ -38,5 +49,15 @@ jwt:
   duration-access-interval-min: 10
 
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: quartz
+      quartz:
+        enabled: true
+
+
+max-deposit-percent: 210
 
 

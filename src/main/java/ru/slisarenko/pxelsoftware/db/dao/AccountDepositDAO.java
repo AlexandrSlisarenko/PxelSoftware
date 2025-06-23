@@ -5,7 +5,7 @@ import ru.slisarenko.pxelsoftware.exception.AccountException;
 
 import java.util.List;
 
-public interface AccountDAO {
+public interface AccountDepositDAO {
 
     List<Account> getAccounts() ;
 

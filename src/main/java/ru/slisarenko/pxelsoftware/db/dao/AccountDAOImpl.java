@@ -12,7 +12,7 @@ import java.util.List;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class AccountDAOImpl implements AccountDAO {
+public class AccountDAOImpl implements AccountDepositDAO {
 
     private final AccountRepository accountRepository;
 
