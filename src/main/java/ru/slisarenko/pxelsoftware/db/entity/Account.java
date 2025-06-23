@@ -1,6 +1,7 @@
 package ru.slisarenko.pxelsoftware.db.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,8 +19,16 @@ import java.math.BigDecimal;
 public class Account extends BaseEntity<Long>{
 
     @DecimalMin("0")
-    @Column(name = "balance", precision = 2)
+    @Column(name = "balance", precision = 5)
     private BigDecimal balance;
+
+    @DecimalMin("0")
+    @Column(name = "start_balance", precision = 5)
+    private BigDecimal startBalance;
+
+    @DecimalMax("20")
+    @Column(name = "interest_rate", precision = 5)
+    private Integer interestRate;
 
     @OneToOne
     @JoinColumn(name = "user_id")
