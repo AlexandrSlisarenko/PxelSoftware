@@ -3,9 +3,9 @@ package ru.slisarenko.pxelsoftware.service;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.slisarenko.pxelsoftware.config.AppConfigProperties;
 import ru.slisarenko.pxelsoftware.db.dao.AccountDepositDAO;
 import ru.slisarenko.pxelsoftware.db.entity.Account;
 
@@ -21,13 +21,15 @@ import java.util.List;
 public class DepositService {
 
     private final AccountDepositDAO accountDAO;
+    private final AppConfigProperties appConfigProperties;
 
     @Builder.Default
     private List<Account> accountsWithMaxDeposit = new ArrayList<>();
     @Builder.Default
     private List<Account> accountsDeposit = new ArrayList<>();
 
-    public void updateStateDeposits(Integer maxPercent){
+    public void updateStateDeposits(){
+        var maxPercent = appConfigProperties.getMaxDepositPercent();
         accountsDeposit.addAll(accountDAO.getAccounts());
         accountsDeposit.stream().filter( account -> {
             var maxDeposit = (account.getStartBalance().intValue() * maxPercent) / 100;

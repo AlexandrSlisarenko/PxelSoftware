@@ -3,11 +3,42 @@ server:
   http2:
     enabled: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: quartz
+      quartz:
+        enabled: true
+
 spring:
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+    properties:
+      org:
+        quartz:
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            class: org.springframework.scheduling.quartz.LocalDataSourceJobStore
+            isClustered: true
+            clusterCheckinInterval: 20000
+            misfireThreshold: 60000
+            useProperties: true
+          scheduler:
+            instanceId: AUTO
+            instanceName: quartz-demo
+          threadPool:
+            threadCount: 10
+            threadPriority: 5
+            class: org.quartz.simpl.SimpleThreadPool
+
   application:
     name: PxelSoftware
   datasource:
-    url: jdbc:postgresql://localhost:5432/HibernatePractic
+    name: quartzDataSource
+    url: jdbc:postgresql://localhost:5432/HibernatePractic?currentSchema=pixel
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -20,18 +51,7 @@ spring:
         hbm2ddl:
           import_files: /import.sql
           auto: create
-  quartz:
-    job-store-type: jdbc #Database Mode
-    jdbc:
-      initialize-schema: never #Do not initialize table structure
-    properties:
-      org:
-        quartz:
-         jobStore:
-            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate #We only make database-specific proxies for databases
-            class: org.quartz.impl.jdbcjobstore.JobStoreTX
-            dataSource: quartzDataSource
-            tablePrefix: QRTZ_
+
 
 logging:
   level:
@@ -49,15 +69,12 @@ jwt:
   duration-access-interval-min: 10
 
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: quartz
-      quartz:
-        enabled: true
-
-
-max-deposit-percent: 210
+app:
+  max-deposit-percent: 210
+  start-update-deposit-milliseconds: 45
+  interval-update-deposit-milliseconds: 30000
+  start-update-state-deposit-milliseconds: 45
+  interval-update-state-deposit-min: 1
+  cron: "0 0/1 * * * ? *"
 
 

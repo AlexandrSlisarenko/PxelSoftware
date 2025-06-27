@@ -30,7 +30,7 @@ public class Account extends BaseEntity<Long>{
     @Column(name = "interest_rate", precision = 5)
     private Integer interestRate;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
