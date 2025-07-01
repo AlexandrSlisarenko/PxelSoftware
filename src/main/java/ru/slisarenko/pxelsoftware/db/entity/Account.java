@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OptimisticLockType;
+import org.hibernate.annotations.OptimisticLocking;
 
 import java.math.BigDecimal;
 
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 @Data
 @Entity
 @Table(name = "account" , schema = "pixel")
+@OptimisticLocking(type = OptimisticLockType.VERSION)
 public class Account extends BaseEntity<Long>{
 
     @DecimalMin("0")
@@ -34,5 +37,8 @@ public class Account extends BaseEntity<Long>{
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Version
+    @Column(name = "version")
+    private Long version;
 }
 

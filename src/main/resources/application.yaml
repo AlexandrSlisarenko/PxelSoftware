@@ -50,7 +50,8 @@ spring:
         format_sql: true
         hbm2ddl:
           import_files: /import.sql
-          auto: create
+          auto: validation
+          #auto: create
 
 
 logging:

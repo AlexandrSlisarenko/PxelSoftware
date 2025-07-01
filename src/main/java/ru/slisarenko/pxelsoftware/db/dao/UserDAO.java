@@ -2,6 +2,7 @@ package ru.slisarenko.pxelsoftware.db.dao;
 
 import ru.slisarenko.pxelsoftware.db.entity.User;
 import ru.slisarenko.pxelsoftware.db.repositary.filter.UserFilterRepository;
+import ru.slisarenko.pxelsoftware.exception.TransferException;
 import ru.slisarenko.pxelsoftware.exception.UserException;
 
 import java.time.LocalDate;
@@ -12,6 +13,8 @@ public interface UserDAO extends UserFilterRepository {
     User getUser(Long id) throws UserException;
 
     User getUserByName(String name) throws UserException;
+
+    User updateUserBalance(Long Id, Double transferAmount, boolean sendOrAccept) throws TransferException, UserException;
 
     User addEmail(Long userId, String email) throws UserException;
 

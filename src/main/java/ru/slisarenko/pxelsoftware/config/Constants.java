@@ -21,4 +21,8 @@ public class Constants {
     public static final String UPDATE_STATE_DEPOSIT_JOB = "updateStateDepositJobBeen";
     public static final String TRIGGER_UPDATE_DEPOSIT_JOB = "updateDepositJobTrigger";
     public static final String TRIGGER_UPDATE_STATE_DEPOSIT_JOB = "updateStateDepositJobTrigger";
+
+    public static final Boolean SEND = true;
+    public static final Boolean ACCEPT = false;
+    public static final String TRANSFER_COMPLETED = "TRANSFER_COMPLETED";
 }

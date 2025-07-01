@@ -10,7 +10,9 @@ import ru.slisarenko.pxelsoftware.db.entity.EmailData;
 import ru.slisarenko.pxelsoftware.db.entity.PhoneData;
 import ru.slisarenko.pxelsoftware.db.entity.User;
 import ru.slisarenko.pxelsoftware.db.repositary.UserRepository;
+import ru.slisarenko.pxelsoftware.dto.UserDTO;
 import ru.slisarenko.pxelsoftware.dto.filter.FilterParams;
+import ru.slisarenko.pxelsoftware.exception.TransferException;
 import ru.slisarenko.pxelsoftware.exception.UserException;
 
 import java.math.BigDecimal;
@@ -161,6 +163,17 @@ public class UserDAOImpl implements UserDAO {
             log.error(e.getMessage());
         }
         return Optional.empty();
+    }
+
+    public User updateUserBalance(Long Id, Double transferAmount, boolean sendOrAccept) throws TransferException, UserException {
+        var user = getUserFromDB(Id);
+
+        var balanceResult = sendOrAccept ? user.getAccount().getBalance().doubleValue() - transferAmount
+                : user.getAccount().getBalance().doubleValue() + transferAmount;
+
+        user.getAccount().setBalance(new BigDecimal(balanceResult));
+
+        return saveAndFlush(user);
     }
 
     private User getUserFromDB(Long Id) throws UserException {

@@ -1,12 +1,10 @@
 package ru.slisarenko.pxelsoftware.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.slisarenko.pxelsoftware.dto.TransferDTO;
 import ru.slisarenko.pxelsoftware.dto.UserDTO;
+import ru.slisarenko.pxelsoftware.exception.UserException;
 import ru.slisarenko.pxelsoftware.security.authentication.IAuthenticationFacade;
 import ru.slisarenko.pxelsoftware.service.UserService;
 
@@ -26,5 +24,10 @@ public class UserController {
     @GetMapping("/user/profile")
     public UserDTO userProfile() {
         return userService.getByName(authenticationFacade.getUsername());
+    }
+
+    @PostMapping(value = "/transfer/", consumes = "application/json", produces = "application/json")
+    public String transfer(@RequestBody TransferDTO transferData) throws UserException {
+        return userService.protectedTransfer(authenticationFacade.getUsername(), transferData);
     }
 }
