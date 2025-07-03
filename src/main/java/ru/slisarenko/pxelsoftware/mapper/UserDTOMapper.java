@@ -2,10 +2,11 @@ package ru.slisarenko.pxelsoftware.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import ru.slisarenko.pxelsoftware.db.entity.User;
 import ru.slisarenko.pxelsoftware.dto.UserDTO;
 
-@Mapper
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserDTOMapper {
 
     @Mapping(target = "emails",
