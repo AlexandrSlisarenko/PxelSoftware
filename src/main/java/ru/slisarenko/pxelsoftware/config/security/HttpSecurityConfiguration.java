@@ -147,8 +147,9 @@ public class HttpSecurityConfiguration {
                 .authorizeHttpRequests(authorizeRequest ->
                         authorizeRequest
                                 .requestMatchers(HttpMethod.POST, "/auth/welcome").hasRole("USER")
-                                /* .requestMatchers(HttpMethod.POST, "/public/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/error").permitAll()*/
+                                /* .requestMatchers(HttpMethod.POST, "/public/**").hasRole("ADMIN")*/
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
                 ).sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

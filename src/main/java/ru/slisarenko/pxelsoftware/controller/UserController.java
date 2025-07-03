@@ -1,5 +1,6 @@
 package ru.slisarenko.pxelsoftware.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.slisarenko.pxelsoftware.dto.TransferDTO;
@@ -16,6 +17,7 @@ public class UserController {
     private final UserService userService;
     private final IAuthenticationFacade authenticationFacade;
 
+    @Operation(summary = "Returns a Hello World message")
     @GetMapping("/welcome")
     public String welcome() {
         return "Welcome to PxelSoftware";
