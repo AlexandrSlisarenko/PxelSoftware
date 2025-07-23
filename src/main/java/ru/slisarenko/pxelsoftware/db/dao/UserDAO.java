@@ -14,6 +14,10 @@ public interface UserDAO extends UserFilterRepository {
 
     User getUserByName(String name) throws UserException;
 
+    Long getUserIdFromDB(String name) throws UserException;
+
+    //User getUserAccountByUserName(String name) throws UserException;
+
     User updateUserBalance(Long Id, Double transferAmount, boolean sendOrAccept) throws TransferException, UserException;
 
     User addEmail(Long userId, String email) throws UserException;

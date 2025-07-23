@@ -10,7 +10,6 @@ import ru.slisarenko.pxelsoftware.db.entity.EmailData;
 import ru.slisarenko.pxelsoftware.db.entity.PhoneData;
 import ru.slisarenko.pxelsoftware.db.entity.User;
 import ru.slisarenko.pxelsoftware.db.repositary.UserRepository;
-import ru.slisarenko.pxelsoftware.dto.UserDTO;
 import ru.slisarenko.pxelsoftware.dto.filter.FilterParams;
 import ru.slisarenko.pxelsoftware.exception.TransferException;
 import ru.slisarenko.pxelsoftware.exception.UserException;
@@ -39,12 +38,13 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User getUserByName(String name) throws UserException {
         try {
-            return userRepository.findByName(name);
+           return userRepository.findByName(name);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new UserException(e.getMessage());
         }
     }
+
 
     @Override
     public User addEmail(Long userId, String email) throws UserException {
@@ -176,9 +176,18 @@ public class UserDAOImpl implements UserDAO {
         return saveAndFlush(user);
     }
 
+    public Long getUserIdFromDB(String name) throws UserException {
+        var id = userRepository.findIdByName(name);
+        if(id == null) {
+            throw new UserException("User not found");
+        }
+        return id.id();
+    }
+
     private User getUserFromDB(Long Id) throws UserException {
         return userRepository.findById(Id).orElseThrow(() -> new UserException("User not found"));
     }
+
 
     private User saveAndFlush(User user) throws UserException {
         try {

@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.slisarenko.pxelsoftware.db.entity.User;
-import ru.slisarenko.pxelsoftware.dto.UserDTO;
+import ru.slisarenko.pxelsoftware.dto.UserProfileDTO;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserDTOMapper {
@@ -21,6 +21,8 @@ public interface UserDTOMapper {
                         .map(ru.slisarenko.pxelsoftware.db.entity.PhoneData::getPhone)
                         .collect(java.util.stream.Collectors.toList())
                         )""")
-    UserDTO userToUserDTO(User user);
+    @Mapping(target = "balance",
+            expression = "java(user.getAccount().getBalance())")
+    UserProfileDTO userToUserDTO(User user);
 
 }

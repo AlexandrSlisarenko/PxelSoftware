@@ -1,5 +1,6 @@
 package ru.slisarenko.pxelsoftware.service;
 
+import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +11,16 @@ import org.springframework.stereotype.Service;
 import ru.slisarenko.pxelsoftware.db.dao.UserDAO;
 import ru.slisarenko.pxelsoftware.db.entity.EmailData;
 import ru.slisarenko.pxelsoftware.db.entity.PhoneData;
+import ru.slisarenko.pxelsoftware.dto.AccountDTO;
 import ru.slisarenko.pxelsoftware.dto.TransferDTO;
-import ru.slisarenko.pxelsoftware.dto.UserDTO;
+import ru.slisarenko.pxelsoftware.dto.UserProfileDTO;
 import ru.slisarenko.pxelsoftware.dto.filter.UserFilterByNameAndPhoneAndEmailAndDateOfBirth;
 import ru.slisarenko.pxelsoftware.exception.TransferException;
 import ru.slisarenko.pxelsoftware.exception.UserException;
+import ru.slisarenko.pxelsoftware.mapper.AccountDTOMapper;
 import ru.slisarenko.pxelsoftware.mapper.UserDTOMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static ru.slisarenko.pxelsoftware.config.Constants.*;
@@ -29,8 +33,9 @@ public class UserService {
 
     private final UserDAO userDAO;
     private final UserDTOMapper userDTOMapper;
+    private final AccountDTOMapper accountDTOMapper;
 
-    public UserDTO getByName(String name) {
+    public UserProfileDTO getByName(String name) {
         try {
             var userFromDB = userDAO.getUserByName(name);
             return userDTOMapper.userToUserDTO(userFromDB);
@@ -39,7 +44,17 @@ public class UserService {
         }
     }
 
-    public UserDTO getById(Long id) {
+    public AccountDTO getAccountByName(String name) {
+        try {
+            var userFromDB = userDAO.getUserByName(name);
+            return accountDTOMapper.userAccountToAccountDTOMapper(userFromDB.getAccount());
+        } catch (UserException userException) {
+            log.error(userException.getMessage(), userException);
+            return getEmptyAccount();
+        }
+    }
+
+    public UserProfileDTO getById(Long id) {
         try {
             var userFromDB = userDAO.getUser(id);
             return userDTOMapper.userToUserDTO(userFromDB);
@@ -48,18 +63,26 @@ public class UserService {
         }
     }
 
-    public UserDTO addEmail(Long id, String email) {
+    public Long getIdByName(String name) {
+        try {
+            return userDAO.getUserIdFromDB(name);
+        } catch (UserException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public UserProfileDTO addEmail(Long id, String email) {
         try {
             var isHaveEmail = doesTheUserHaveAnEmail(id, email);
 
-            return isHaveEmail ? userDTOMapper.userToUserDTO(userDAO.addEmail(id, email))
-                    : getEmptyUser("Email " + email + " already exists");
+            return isHaveEmail ? getEmptyUser("Email " + email + " already exists")
+                    : userDTOMapper.userToUserDTO(userDAO.addEmail(id, email));
         } catch (UserException userException) {
             return getEmptyUser(userException.getMessage());
         }
     }
 
-    public UserDTO updateEmail(Long id, String emailOld, String emailNew) {
+    public UserProfileDTO updateEmail(Long id, String emailOld, @Email String emailNew) {
         try {
             var isHaveEmailOld = doesTheUserHaveAnEmail(id, emailOld);
             var isNotHaveEmailNew = !doesTheUserHaveAnEmail(id, emailNew);
@@ -71,7 +94,7 @@ public class UserService {
         }
     }
 
-    public UserDTO deleteEmail(Long id, String email) {
+    public UserProfileDTO deleteEmail(Long id, String email) {
         try {
             if (!isOnlyOneEmail(id)) {
                 var isHaveEmail = doesTheUserHaveAnEmail(id, email);
@@ -84,7 +107,7 @@ public class UserService {
         }
     }
 
-    public UserDTO addPhone(Long id, String phone) {
+    public UserProfileDTO addPhone(Long id, String phone) {
         try {
             var isHavePhone = doesTheUserHaveAnPhone(id, phone);
 
@@ -95,7 +118,7 @@ public class UserService {
         }
     }
 
-    public UserDTO updatePhone(Long id, String phoneOld, String phoneNew) {
+    public UserProfileDTO updatePhone(Long id, String phoneOld, String phoneNew) {
         try {
             var isHavePhoneOld = doesTheUserHaveAnPhone(id, phoneOld);
             var isNotHavePhoneNew = doesTheUserHaveAnPhone(id, phoneNew);
@@ -107,7 +130,7 @@ public class UserService {
         }
     }
 
-    public UserDTO deletePhone(Long id, String phone) {
+    public UserProfileDTO deletePhone(Long id, String phone) {
         try {
             if (!isOnlyOnePhone(id)) {
                 var isHavePhone = doesTheUserHaveAnPhone(id, phone);
@@ -121,7 +144,7 @@ public class UserService {
         }
     }
 
-    public Page<UserDTO> searchByFilter(UserFilterByNameAndPhoneAndEmailAndDateOfBirth filter, Pageable pageable) {
+    public Page<UserProfileDTO> searchByFilter(UserFilterByNameAndPhoneAndEmailAndDateOfBirth filter, Pageable pageable) {
         try {
             var foundUsers = userDAO.searchUsersByFilter(filter, pageable);
             var usersDTO = foundUsers.stream()
@@ -168,14 +191,14 @@ public class UserService {
     }
 
     private boolean isOnlyOneEmail(Long id) throws UserException {
-        return userDAO.countEmail(id) > 1;
+        return !(userDAO.countEmail(id) > 1);
     }
 
     private boolean isOnlyOnePhone(Long id) throws UserException {
         return userDAO.countPhone(id) > 1;
     }
 
-    private boolean isEnoughMoney(UserDTO sendingUser, TransferDTO transferData) {
+    private boolean isEnoughMoney(UserProfileDTO sendingUser, TransferDTO transferData) {
         if (sendingUser.getBalance().longValue() > transferData.getTransferAmount()) {
             return true;
         } else {
@@ -184,11 +207,17 @@ public class UserService {
     }
 
 
-    private UserDTO getEmptyUser(String errorMessage) {
+    private UserProfileDTO getEmptyUser(String errorMessage) {
         log.error(errorMessage);
-        return UserDTO.builder()
+        return UserProfileDTO.builder()
                 .id(-1L)
                 .messageError(errorMessage)
+                .build();
+    }
+
+    private AccountDTO getEmptyAccount() {
+        return AccountDTO.builder()
+                .balance(BigDecimal.ZERO)
                 .build();
     }
 

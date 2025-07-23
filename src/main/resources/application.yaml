@@ -57,8 +57,9 @@ spring:
 logging:
   level:
       root: INFO
-      org.springframework.jdbc.core: TRACE
-      org.springframework.security: TRACE
+      org.springframework.jdbc.core: INFO
+      org.springframework.security: INFO
+      ru.slisarenko.pxelsoftware: TRACE
 
 jwt:
   access-token-key: '{"kty":"oct","k":"404491d134b23069cd800106d3e2edd63996def57f8f1530e4e7bc8dbdf80fb9"}'
@@ -67,7 +68,7 @@ jwt:
   refresh-path: "/jwt/refresh"
   logout-path: "/jwt/logout"
   duration-refresh-interval-hours: 2
-  duration-access-interval-min: 10
+  duration-access-interval-min: 120
 
 springdoc:
   swagger-ui:
@@ -76,9 +77,9 @@ springdoc:
 app:
   max-deposit-percent: 210
   start-update-deposit-milliseconds: 45
-  interval-update-deposit-milliseconds: 30000
-  start-update-state-deposit-milliseconds: 45
-  interval-update-state-deposit-min: 1
+  interval-update-deposit-milliseconds: 600000
+  start-update-state-deposit-milliseconds: 600000
+  interval-update-state-deposit-min: 10
   cron: "0 0/1 * * * ? *"
 
 

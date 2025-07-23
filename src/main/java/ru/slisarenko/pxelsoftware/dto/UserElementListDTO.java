@@ -1,12 +1,11 @@
 package ru.slisarenko.pxelsoftware.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,15 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDTO {
-    private Long id;
-    private String username;
-    private String password;
-    private LocalDate dateOfBirth;
-    private BigDecimal balance;
+public class UserElementListDTO {
+    private String userName;
     @Builder.Default
     private List<String> emails = new ArrayList<>();
     @Builder.Default
     private List<String> phones = new ArrayList<>();
-    private String messageError;
 }

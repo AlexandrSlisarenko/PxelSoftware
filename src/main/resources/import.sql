@@ -7,12 +7,14 @@ INSERT INTO pixel.account(balance, interest_rate, start_balance, id, user_id, ve
 INSERT INTO pixel.account(balance, interest_rate, start_balance, id, user_id, version) values (10,10,10,2,2, 0);
 INSERT INTO pixel.account(balance, interest_rate, start_balance, id, user_id, version) values (10,10,10,3,3, 0);
 
-INSERT INTO pixel.email_data(id, user_id, email) VALUES (1, 1, 'ivanov_ivan@mail,ru');
-INSERT INTO pixel.email_data(id, user_id, email) VALUES (2, 2, 'petrov_petr@mail,ru');
-INSERT INTO pixel.email_data(id, user_id, email) VALUES (3, 3, 'sidorov_sidor@mail,ru');
+INSERT INTO pixel.email_data(id, user_id, email) VALUES (1, 1, 'ivanov_ivan@mail.ru');
+INSERT INTO pixel.email_data(id, user_id, email) VALUES (2, 2, 'petrov_petr@mail.ru');
+INSERT INTO pixel.email_data(id, user_id, email) VALUES (3, 3, 'sidorov_sidor@mail.ru');
+SELECT SETVAL('pixel.email_data_id_seq', (SELECT MAX(id) FROM pixel.email_data));
 
 INSERT INTO pixel.phone_data(id, user_id, phone) VALUES (1,1,'79207865432');
 INSERT INTO pixel.phone_data(id, user_id, phone) VALUES (2,2,'79207865433');
 INSERT INTO pixel.phone_data(id, user_id, phone) VALUES (3,3,'79207865434');
+SELECT SETVAL('pixel.phone_data_id_seq', (SELECT MAX(id) FROM pixel.phone_data));
 
 

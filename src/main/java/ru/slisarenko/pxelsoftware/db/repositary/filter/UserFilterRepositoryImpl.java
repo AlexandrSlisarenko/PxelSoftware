@@ -11,9 +11,6 @@ import ru.slisarenko.pxelsoftware.db.querydsl.QPredicates;
 import ru.slisarenko.pxelsoftware.dto.filter.FilterParams;
 import ru.slisarenko.pxelsoftware.dto.filter.UserFilterByNameAndPhoneAndEmailAndDateOfBirth;
 
-import java.util.Collections;
-import java.util.List;
-
 import static ru.slisarenko.pxelsoftware.db.entity.QUser.user;
 
 @RequiredArgsConstructor
